@@ -112,8 +112,9 @@ class Reader():
 
     def normalize(self):
         for i, userdict in enumerate(self.userlist):
+            norm = np.sqrt((np.array(list(userdict.values()))**2).sum())
             for key,value in userdict.items():
-                self.userlist[i][key] = value/np.sqrt((np.array(userdict.values())**2).sum())
+                self.userlist[i][key] = value/norm
 
 
     def dump(self,filename):
@@ -134,9 +135,10 @@ class Reader():
                 file.write('\n')
 
 def normalize(userlist):
-    for i,userdict in userlist:
+    for i,userdict in enumerate(userlist):
+        norm = np.sqrt((np.array(list(userdict.values()))**2).sum())
         for key ,value in userdict.items():
-            userlist[i][key] = value/np.sqrt((np.array(userdict.values())**2).sum())
+            userlist[i][key] = value/norm
 
 def cos_similar(dict_a,dict_b):
 	#计算余弦相似度
