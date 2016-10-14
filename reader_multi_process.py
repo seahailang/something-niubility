@@ -9,12 +9,12 @@ from datetime import datetime
 
 BasePath = os.path.dirname(__file__)
 
-TRAINSETFILE =os.path.join(BasePath,'data/user_tag_query.2W.TRAIN')
-TESTSETFILE = os.path.join(BasePath,'data/user_tag_query.2W.TEST')
-TEMPFILE = os.path.join(BasePath,'temp/dataset')
-RESULTFILE = os.path.join(BasePath,'data/result.csv')
-TEST = os.path.join(BasePath,'temp/test')
-TRAIN = os.path.join(BasePath,'temp/TRAIN')
+TRAINSETFILE =os.path.join(BasePath,'/data/user_tag_query.2W.TRAIN')
+TESTSETFILE = os.path.join(BasePath,'/data/user_tag_query.2W.TEST')
+TEMPFILE = os.path.join(BasePath,'/temp/dataset')
+RESULTFILE = os.path.join(BasePath,'/data/result.csv')
+TEST = os.path.join(BasePath,'/temp/test')
+TRAIN = os.path.join(BasePath,'/temp/TRAIN')
 
 
 class Reader():
@@ -40,7 +40,7 @@ class Reader():
                     infoflag = 4
                 else:
                     infoflag = 1
-                #count_test =0
+                count_test =0
                 for userquery in filereader:
                     userdict={}
                     userdictflag ={}
@@ -58,9 +58,9 @@ class Reader():
                             if userdictflag[word]:
                                 self.dict[word] += 1
                     self.userlist.append(userdict)
-                    #count_test +=1
-                    #if count_test>100:
-                     #   break
+                    count_test +=1
+                    if count_test>100:
+                       break
                 pynlpir.close()
         self.IsTraining = IsTraining
         self.IsSegment = IsSegment
