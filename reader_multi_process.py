@@ -7,14 +7,14 @@ import numpy as np
 
 from datetime import datetime
 
-BasePath = os.path.dirname(__file__)
+BasePath = os.path.dirname(os.path.dirname(__file__))
 
-TRAINSETFILE =os.path.join(BasePath,'/data/user_tag_query.2W.TRAIN')
-TESTSETFILE = os.path.join(BasePath,'/data/user_tag_query.2W.TEST')
-TEMPFILE = os.path.join(BasePath,'/temp/dataset')
-RESULTFILE = os.path.join(BasePath,'/data/result.csv')
-TEST = os.path.join(BasePath,'/temp/test')
-TRAIN = os.path.join(BasePath,'/temp/TRAIN')
+TRAINSETFILE =os.path.join(BasePath,'data/user_tag_query.2W.TRAIN')
+TESTSETFILE = os.path.join(BasePath,'data/user_tag_query.2W.TEST')
+TEMPFILE = os.path.join(BasePath,'temp/dataset')
+RESULTFILE = os.path.join(BasePath,'data/result.csv')
+TEST = os.path.join(BasePath,'temp/test')
+TRAIN = os.path.join(BasePath,'temp/TRAIN')
 
 
 class Reader():
@@ -29,6 +29,9 @@ class Reader():
         self.userlist = []
         self.userinfo = []
         self.dict = {}
+        self.IsTraining = IsTraining
+        self.IsSegment = IsSegment
+        self.IsDF = False
         with open(filename,encoding = 'GB18030') as file:
             filereader = csv.reader(file,dialect = 'excel-tab',quoting = csv.QUOTE_NONE)
             if not IsSegment:
@@ -40,7 +43,7 @@ class Reader():
                     infoflag = 4
                 else:
                     infoflag = 1
-                count_test =0
+                # count_test =0
                 for userquery in filereader:
                     userdict={}
                     userdictflag ={}
@@ -58,13 +61,12 @@ class Reader():
                             if userdictflag[word]:
                                 self.dict[word] += 1
                     self.userlist.append(userdict)
-                    count_test +=1
-                    if count_test>100:
-                       break
+                    # count_test +=1
+                    # if count_test>100:
+                    #    break
                 pynlpir.close()
-        self.IsTraining = IsTraining
-        self.IsSegment = IsSegment
-        self.IsDF = False
+                self.IsDF = True
+
     def segment(self):
     	#如果没有分词的话，对用户词典进行分词操作
         if self.IsSegment:
@@ -90,19 +92,19 @@ class Reader():
             pynlpir.close()
             self.IsSegment = True
 
-    # def df(self):
-    # 	#计算df
-    #     if not self.IsSegment:
-    #         self.segment()
-    #     for key in self.dict.keys():
-    #         for userdict in self.userlist:
-    #             if key in userdict:
-    #                 self.dict[key] += 1
-    #     self.IsDF = True
+    def df(self):
+    	#计算df
+        if not self.IsSegment:
+            self.segment()
+        for key in self.dict.keys():
+            for userdict in self.userlist:
+                if key in userdict:
+                    self.dict[key] += 1
+        self.IsDF = True
     def tf_idf(self):
-    	#计算tf——idf
-        # if not self.IsDF:
-        #     self.df()
+    	# 计算tf——idf
+        if not self.IsDF:
+            self.df()
         N = len(self.userlist)
         for i,userdict in enumerate(self.userlist):
             for key,value in userdict.items():

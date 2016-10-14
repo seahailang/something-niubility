@@ -2,7 +2,7 @@
 from reader_multi_process import *
 from multiprocessing import Process
 
-filelist =list(map(lambda x:os.path.join(BasePath,'/temp/'+x),['test_info','test_dict','train_info','train_dict']))
+filelist =list(map(lambda x:os.path.join(BasePath,'temp/'+x),['test_info','test_dict','train_info','train_dict']))
 
 def loaddata(filelist = filelist):
     data=[]
@@ -38,14 +38,14 @@ def worker(usersa,usersb,list_a,list_b,filename,k):
 if __name__ =='__main__':
     info_a,list_a,info_b,list_b = loaddata()
     cut = [(0,5000),(5000,10000),(10000,15000),(15000,20000)]
-    #cut =[(0,5),(5,10)]
+    # cut =[(0,5),(5,10)]
     list_cut = [list_a[c[0]:c[1]] for c in cut]
     
     #simi_write(list_a[cut[0][0]:cut[0][1]],list_b,'D:/CCF/temp/simi_mat')
-    filename = os.path.join(BasePath,'/data/result')
+    filename = os.path.join(BasePath,'data/result')
     plist=[]
     for i,c in enumerate(list_cut):
-        plist.append(Process(target = worker,args = (info_a[cut[i][0]:cut[i][1]],info_b,c,list_b,filename+str(i),10)))
+        plist.append(Process(target = worker,args = (info_a[cut[i][0]:cut[i][1]],info_b,c,list_b,filename+str(i),50)))
     for i in range(len(cut)):
         plist[i].start() 
     for i in range(len(cut)):
