@@ -4,6 +4,7 @@ from multiprocessing import Process
 
 filelist =list(map(lambda x:os.path.join(BasePath,'temp/'+x),['test_info','test_dict','train_info','train_dict']))
 
+
 def loaddata(filelist = filelist):
     data=[]
     for filename in filelist:
@@ -17,7 +18,11 @@ def loaddata(filelist = filelist):
 #     with open(filename,'wb') as file: 
 #         pickle.dump(sim_mat,file)
 
+
+
+
 def worker(usersa,usersb,list_a,list_b,filename,k):
+    #并行计算的worker
     list_b = np.array(list_b)
     user_idx = []
     sim_mat = []
