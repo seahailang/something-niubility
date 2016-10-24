@@ -1,4 +1,4 @@
-#coding: gbk
+
 from reader_multi_process import *
 from multiprocessing import Process
 
