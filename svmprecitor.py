@@ -6,10 +6,7 @@
 # predictor
 '''
 
-import sklearn 
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.neural_network import MLPClassifier
 from sklearn.decomposition import TruncatedSVD
 from sklearn.model_selection import cross_val_score
 from sklearn.feature_selection import SelectKBest
@@ -123,7 +120,7 @@ if __name__=='__main__':
 
         # if we want cross validation
         # clf 是要调节的参数之一
-        cv_score.append(cross_val_score(clf[i],mdata,mlabel,cv=2))
+        cv_score.append(cross_val_score(clf[i],mdata,mlabel,cv=5))
 
 
         ###################################################################
@@ -136,7 +133,12 @@ if __name__=='__main__':
         # result.append(mpredict)
 
     score = np.mean([np.mean(cv) for cv in cv_score])
+    print(U'预期的得分是')
     print(score)
+    print(U'每一项的得分是')
+    for cv in cv_score:
+        print(cv)
+        
 
 ###############################################################################################
     #下面的代码是预测用的，cv的时候没用
