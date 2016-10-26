@@ -16,8 +16,6 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn.externals import joblib
 
-import scipy
-from scipy import sparse
 import numpy as np
 
 import pickle
@@ -31,6 +29,27 @@ labelfile = os.path.join(BasePath,'temp/TRAIN_info')
 test_info = os.path.join(BasePath,'temp/test_info')
 resultfile = os.path.join(BasePath,'data/result2.csv')
 
+################################################################
+######调参看这里########
+
+#特征选择的参数
+
+selector = [
+            SelectKBest(chi2,k=5000),
+            SelectKBest(chi2,k=5000),
+            SelectKBest(chi2,k=5000)
+            ]
+
+
+
+
+#支持向量机的参数
+clf= [
+        SVC(),
+        SVC(),
+        SVC(),
+        ]
+###############################################################
 
 def getdata(filename = trainfile):
     with open(filename,'rb') as file:
@@ -84,6 +103,7 @@ if __name__=='__main__':
         testdata.format ='csr' 
 
     result = []
+    cv_score = []
 
 
     for  i in range(len(label)):
@@ -92,9 +112,8 @@ if __name__=='__main__':
         mlabel = label[i][lid[i]]
 
         # #using chi_square to select feature in train and test
-        # selector = SelectKBest(chi2,k=5000)
-        # mdata = selector.fit_transform(mdata,mlabel)
-        # mtest = selector.transform(mtest)
+        # mdata = selector[i].fit_transform(mdata,mlabel)
+        # mtest = selector[i].transform(mtest)
 
 
         #using svd to decomposition the train and test data
@@ -102,21 +121,35 @@ if __name__=='__main__':
         mdata = svd.fit_transform(mdata)
         mtest = svd.transform(mtest)
 
-        #using svm to classify the test
-        clf = SVC()
-        clf.fit(mdata,mlabel)
+        # if we want cross validation
+        # clf 是要调节的参数之一
+        cv_score.append(cross_val_score(clf[i],mdata,mlabel,cv=2))
 
-        mpredict = clf.predict(mtest)
 
-        result.append(mpredict)
-        print(i)
+        ###################################################################
+        #下面的代码在CV的时候不需要
+        # #using svm to classify the test
+        # clf[i].fit(mdata,mlabel)
 
-    #write the result to file
-    with open(test_info,'rb') as file:
-        test = pickle.load(file)
-    with open(resultfile,'w') as file:
-        for i in range(len(test)):
-            file.write(test[i][0]+' '+result[0][i]+' '+result[1][i]+' '+result[2][i]+'\n')
+        # mpredict = clf[i].predict(mtest)
+
+        # result.append(mpredict)
+
+    score = np.mean([np.mean(cv) for cv in cv_score])
+    print(score)
+
+###############################################################################################
+    #下面的代码是预测用的，cv的时候没用
+    # #write the result to file
+    # with open(test_info,'rb') as file:
+    #     test = pickle.load(file)
+    # with open(resultfile,'w') as file:
+    #     for i in range(len(test)):
+    #         file.write(test[i][0]+' '+result[0][i]+' '+result[1][i]+' '+result[2][i]+'\n')
+
+
+
+
 
 
 
